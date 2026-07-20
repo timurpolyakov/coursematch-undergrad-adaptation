@@ -1,0 +1,46 @@
+{
+  "term": "Fall 2025",
+  "source": "User-provided enrollment table image",
+  "unit": "students",
+  "classification": "program-category counts; categories are not individual majors or Cornell colleges",
+  "groups": {
+    "STEM (Science, Technology, Engineering and Math)": {
+      "01 Agriculture, Agriculture Operations & Related Sciences": 836,
+      "03 Natural Resources & Conservation": 427,
+      "11 Computer & Information Sciences": 1489,
+      "14 Engineering": 2944,
+      "26 Biological & Biomedical Sciences": 1136,
+      "27 Mathematics & Statistics": 201,
+      "30 Multi/Interdisciplinary": 33,
+      "30 Nutritional Sciences": 614,
+      "40 Physical Sciences": 226,
+      "51 Health Professions & Related Clinical Sciences": 142
+    },
+    "Social & Behavioral Sciences": {
+      "05 Area, Ethnic, Cultural & Gender Studies": 67,
+      "09 Communication, Journalism & Related Programs": 216,
+      "19 Family & Consumer Sciences/Human Sciences": 145,
+      "42 Psychology": 404,
+      "44 Public Administration & Social Service Professions": 318,
+      "45 Social Sciences": 1612,
+      "52 Business, Management & Marketing": 1863,
+      "54 History": 39
+    },
+    "Humanities, Arts & Design": {
+      "04 Architecture & Related Programs": 582,
+      "16 Foreign Languages, Literatures & Linguistics": 65,
+      "23 English Language & Literature/Letters": 67,
+      "24 Liberal Arts & Sciences/General Studies & Humanities": 2248,
+      "30 Multi/Interdisciplinary": 159,
+      "38 Philosophy & Religious Studies": 45,
+      "50 Visual & Performing Arts": 255,
+      "99 Unknown": 5
+    }
+  },
+  "group_totals": {
+    "STEM (Science, Technology, Engineering and Math)": 8048,
+    "Social & Behavioral Sciences": 4664,
+    "Humanities, Arts & Design": 3426
+  },
+  "grand_total": 16138
+}

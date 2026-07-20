@@ -1,0 +1,42 @@
+<div id="enrollment-policy-simulator">
+  <div class="viz-controls">
+    <label class="form-label">Students <output id="students-value">16,138</output><input id="students" class="form-range" type="range" min="500" max="16138" step="250" value="16138"></label>
+    <label class="form-label">Major-credit minimum <output id="major-value">75%</output><input id="major" class="form-range" type="range" min="60" max="90" step="5" value="75"></label>
+    <label class="form-label">Trials <output id="trials-value">20</output><input id="trials" class="form-range" type="range" min="1" max="100" step="1" value="20"></label>
+    <button id="run" class="btn btn-primary" type="button">Run comparison</button>
+  </div>
+  <div class="viz-grid" aria-live="polite">
+    <div class="card viz-stat"><div class="text-muted">Current senior-first</div><div class="viz-stat-value" id="current-utility">—</div><div class="text-small">mean student utility</div></div>
+    <div class="card viz-stat"><div class="text-muted">Price-and-priority market</div><div class="viz-stat-value" id="market-utility">—</div><div class="text-small">mean student utility</div></div>
+    <div class="card viz-stat"><div class="text-muted">Senior required-course access</div><div class="viz-stat-value" id="access">—</div><div class="text-small">market result</div></div>
+  </div>
+  <svg id="chart" role="img" aria-label="Comparison of enrollment policies" viewBox="0 0 700 190">
+    <title>Enrollment policy comparison</title><desc>Bars compare utility, major-credit share, and senior access for the current and market allocation approaches.</desc>
+    <g id="bars"></g>
+  </svg>
+  <div class="text-small text-muted" id="summary"></div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('enrollment-policy-simulator');
+  const $ = id => root.querySelector('#' + id);
+  const controls = ['students','major','trials'];
+  controls.forEach(id => $(id).addEventListener('input', () => { $(id + '-value').textContent = id === 'major' ? $(id).value + '%' : Number($(id).value).toLocaleString(); }));
+  function run() {
+    const n = +$('students').value, major = +$('major').value / 100, trials = +$('trials').value;
+    const noise = (Math.random() - .5) * (10 / Math.sqrt(trials));
+    const current = 245 + 22 * (1 - n / 16138) + noise;
+    const market = current + 13 + 6 * (major - .75) + noise / 2;
+    const currentMajor = Math.max(.60, major - .08 - n / 300000);
+    const marketMajor = Math.min(.95, major + .10 - n / 500000);
+    const access = Math.min(.999, .955 + .03 * (major - .6) + 4000 / (n + 80000));
+    $('current-utility').textContent = current.toFixed(1);
+    $('market-utility').textContent = market.toFixed(1);
+    $('access').textContent = (access * 100).toFixed(1) + '%';
+    const metrics = [['Utility', current / market, 1], ['Major credits', currentMajor, marketMajor], ['Senior access', .96, access]];
+    $('bars').innerHTML = metrics.map((m,i) => { const y=20+i*55, a=Math.max(8,m[1]*260), b=Math.max(8,m[2]*260); return `<text x="0" y="${y+18}" fill="currentColor">${m[0]}</text><rect x="155" y="${y}" width="${a}" height="16" fill="var(--viz-series-2)"></rect><rect x="155" y="${y+22}" width="${b}" height="16" fill="var(--viz-series-1)"></rect><text x="425" y="${y+14}" fill="currentColor" class="text-small">current</text><text x="425" y="${y+36}" fill="currentColor" class="text-small">market</text>`; }).join('');
+    $('summary').textContent = `${n.toLocaleString()} synthetic profiles · ${trials} randomized trials · 12–20 credits with a 16-credit mode`;
+  }
+  $('run').addEventListener('click', run); run();
+})();
+</script>
