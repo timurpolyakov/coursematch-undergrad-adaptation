@@ -1,4 +1,4 @@
-# Cornell Enrollment Policy Simulator
+# Cornell Enrollment Policy Simulator (Built with Codex)
 
 This project compares two synthetic Fall 2025 enrollment policies using the
 saved course catalog and 16,138 generated student profiles. It is a policy
