@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# coursematch-undergrad-adaptation
-=======
 # Cornell Enrollment Policy Simulator
 
 This project compares two synthetic Fall 2025 enrollment policies using the
@@ -57,4 +54,3 @@ For a reproducible command-line run with a detailed report:
 ```bash
 python3 simulation.py --trials 1 --seed 2025 --report student_allocation_comparison.json
 ```
->>>>>>> 3ef7bfd (Initial commit)
