@@ -24,6 +24,23 @@ Time conflicts, prerequisites, linked discussion/lab sections, college
 requirements, cross-listings, waitlists, and actual section caps are not yet
 modeled.
 
+## Interpreting policy comparisons
+
+The two policies can produce nearly identical charts when there is more modeled
+course capacity than demand for the same courses. In that situation, price
+modifiers and budgets rarely decide an allocation. To test whether a policy
+meaningfully changes outcomes, use stress scenarios that introduce one or more
+of these conditions:
+
+- More juniors and seniors competing for the same upper-level major courses.
+- Reduced capacity for those contested upper-level courses.
+- A smaller set of offered courses, so that demand is concentrated rather than
+  spread across the full catalog.
+
+These are experimental conditions for sensitivity testing, not claims about
+actual Cornell enrollment. Compare policy deltas alongside uncertainty; wide
+student-level variation can hide a very small average policy effect.
+
 ## Project layout
 
 | File | Purpose |
