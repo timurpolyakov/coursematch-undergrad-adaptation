@@ -46,96 +46,37 @@ profiles_by_id = {
 years = ["Freshman", "Sophomore", "Junior", "Senior"]
 policies = ["senior_first", "market"]
 policy_labels = ["Senior-first", "Priority market"]
-colors = ["#4C78A8", "#F58518"]
-
-
-# GRAPH 1 shows average utility, lines are standard deviation
-
-utilities = {
-    year: {
-        "senior_first": [],
-        "market": []
-    }
+# GRAPH 1: paired change in utility by class year. Plotting the change directly
+# avoids hiding a policy effect behind the much larger variation in individual
+# utility levels.
+utility_deltas = {
+    year: [
+        student["market"]["utility"] - student["senior_first"]["utility"]
+        for student in report
+        if student["year"] == year
+    ]
     for year in years
 }
+average_deltas = [statistics.mean(utility_deltas[year]) for year in years]
+ci95 = [
+    1.96 * statistics.stdev(utility_deltas[year]) / len(utility_deltas[year]) ** 0.5
+    for year in years
+]
+colors = ["#2E8B57" if delta >= 0 else "#C23B22" for delta in average_deltas]
 
-for student in report:
-    year = student["year"]
-
-    utilities[year]["senior_first"].append(
-        student["senior_first"]["utility"]
-    )
-
-    utilities[year]["market"].append(
-        student["market"]["utility"]
-    )
-
-senior_first_averages = []
-market_averages = []
-
-senior_first_stddevs = []
-market_stddevs = []
-
-for year in years:
-    senior_first_scores = utilities[year]["senior_first"]
-    market_scores = utilities[year]["market"]
-
-    # The average is height of each bar
-    senior_first_averages.append(
-        statistics.mean(senior_first_scores)
-    )
-
-    market_averages.append(
-        statistics.mean(market_scores)
-    )
-
-    # The standard deviation is error bar
-    senior_first_stddevs.append(
-        statistics.stdev(senior_first_scores)
-    )
-
-    market_stddevs.append(
-        statistics.stdev(market_scores)
-    )
-
-
-# Graph 1: average utility by year, with standard-deviation error bars
-
-x_positions = list(range(len(years)))
-bar_width = 0.35
-
-plt.figure(figsize=(10, 6))
-
-plt.bar(
-    [x - bar_width / 2 for x in x_positions],
-    senior_first_averages,
-    width=bar_width,
-    yerr=senior_first_stddevs,
-    capsize=6,
-    label="Senior-first",
-    color=colors[0],
-    edgecolor="black"
-)
-
-plt.bar(
-    [x + bar_width / 2 for x in x_positions],
-    market_averages,
-    width=bar_width,
-    yerr=market_stddevs,
-    capsize=6,
-    label="Priority market",
-    color=colors[1],
-    edgecolor="black"
-)
-
-plt.xticks(x_positions, years)
-plt.ylabel("Average student utility")
-plt.title("Average utility by class year, with standard deviation bars")
-plt.legend()
-plt.grid(axis="y", linestyle="--", alpha=0.4)
-plt.tight_layout()
-
-plt.savefig("average_utility_by_year_with_stddev.png", dpi=300)
+figure, axis = plt.subplots(figsize=(10, 6))
+bars = axis.bar(years, average_deltas, yerr=ci95, capsize=6, color=colors, edgecolor="black")
+axis.axhline(0, color="black", linewidth=1)
+axis.set_ylabel("Market − senior-first utility")
+axis.set_title("Change in average utility by class year (95% CI)")
+axis.grid(axis="y", linestyle="--", alpha=0.4)
+for bar, delta in zip(bars, average_deltas):
+    vertical_alignment = "bottom" if delta >= 0 else "top"
+    offset = 4 if delta >= 0 else -4
+    axis.annotate(f"{delta:+.1f}", (bar.get_x() + bar.get_width() / 2, delta),
+                  xytext=(0, offset), textcoords="offset points", ha="center", va=vertical_alignment)
+figure.tight_layout()
+figure.savefig("utility_delta_by_year.png", dpi=300)
 plt.show()
 
 # Graph 2; utility, average credits, major-course share, and senior
@@ -222,7 +163,7 @@ for policy, label in zip(policies, policy_labels):
 
 # Print metrics in terminal
 
-print("\nOriginal policy-comparison metrics")
+print("\nPolicy-comparison metrics")
 print("-" * 70)
 
 for metric_name in metrics["Senior-first"]:
@@ -236,40 +177,25 @@ for metric_name in metrics["Senior-first"]:
     )
 
 
-# Make Graph 2:
-
+# Graph 2: direct policy changes, retaining each metric's natural unit.
 metric_names = list(metrics["Senior-first"].keys())
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 axes = axes.flatten()
 
 for axis, metric_name in zip(axes, metric_names):
-    values = [
-        metrics["Senior-first"][metric_name],
-        metrics["Priority market"][metric_name]
-    ]
-
-    bars = axis.bar(
-        policy_labels,
-        values,
-        color=colors
-    )
-
+    delta = metrics["Priority market"][metric_name] - metrics["Senior-first"][metric_name]
+    color = "#2E8B57" if delta >= 0 else "#C23B22"
+    bar = axis.bar(["Market change"], [delta], color=color, edgecolor="black")[0]
+    axis.axhline(0, color="black", linewidth=1)
     axis.set_title(metric_name)
-    axis.set_ylabel(metric_name)
+    axis.set_ylabel("Market − senior-first")
     axis.grid(axis="y", linestyle="--", alpha=0.4)
+    axis.annotate(f"{delta:+.2f}", (bar.get_x() + bar.get_width() / 2, delta),
+                  xytext=(0, 4 if delta >= 0 else -4), textcoords="offset points",
+                  ha="center", va="bottom" if delta >= 0 else "top")
 
-    # Write each exact value above its bar
-    for bar, value in zip(bars, values):
-        axis.text(
-            bar.get_x() + bar.get_width() / 2,
-            bar.get_height(),
-            f"{value:.2f}",
-            ha="center",
-            va="bottom"
-        )
-
-fig.suptitle("Senior-first registration vs. priority market", fontsize=16)
+fig.suptitle("Market change relative to senior-first", fontsize=16)
 plt.tight_layout()
 
 # Save the second graph in project folder
