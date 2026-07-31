@@ -5,3 +5,4 @@ __pycache__/
 allocation_report.json
 weight_tuning_results.json
 policy_search_*.json
+*.png
