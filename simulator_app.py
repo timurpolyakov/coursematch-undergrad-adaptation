@@ -19,7 +19,9 @@ class EnrollmentGUI(tk.Tk):
 
         controls = ttk.Frame(self, padding=12)
         controls.pack(fill="x")
-        self.students = tk.IntVar(value=1000)
+        # Use the complete synthetic population by default so reports and
+        # downstream graphs reflect the model rather than a small sample.
+        self.students = tk.IntVar(value=0)
         self.trials = tk.IntVar(value=1)
         self.seed = tk.IntVar(value=2025)
         self._field(controls, "Profiles (0 = all 16,138)", self.students, 0)
